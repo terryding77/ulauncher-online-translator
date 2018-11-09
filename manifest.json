@@ -1,0 +1,34 @@
+{
+  "manifest_version": "2",
+  "api_version": "1",
+  "name": "online translator",
+  "description": "online translator default for Chinese and English",
+  "developer_name": "Terry Ding",
+  "icon": "images/icon.png",
+  "options": {
+    "query_debounce": 1
+  },
+  "preferences": [
+    {
+      "id": "keyword",
+      "type": "keyword",
+      "name": "translator",
+      "description": " extension",
+      "default_value": "tran"
+    },
+    {
+      "id": "google_credentials",
+      "type": "input",
+      "name": "Google credentials json file path",
+      "description": "Google credentials json file path like /home/username/Downloads/translate-XXX.json",
+      "default_value": ""
+    },
+    {
+      "id": "https_proxy",
+      "type": "input",
+      "name": "a https proxy url like: socks5://127.0.0.1:1080",
+      "description": "a https proxy url like: socks5://127.0.0.1:1080",
+      "default_value": ""
+    }
+  ]
+}
