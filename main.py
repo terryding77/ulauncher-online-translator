@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import logging
 import os
+import urllib
 from pprint import pformat
 
 from google.cloud import translate
@@ -29,6 +30,9 @@ class TranslatorExtension(Extension):
 
     def show_menu(self):
         query = os.popen('xclip -out -selection clipboard').read()
+        if isinstance(query, unicode):
+            query = query.encode('utf-8')
+
         logging.info(query)
 
         items = []
@@ -38,7 +42,7 @@ class TranslatorExtension(Extension):
             logging.debug(item['translatedText'])
             items.append(ExtensionResultItem(icon='images/icon.png',
                                              name=item['translatedText'],
-                                             description=u'单词"{}" in clipboard'.format(query),
+                                             description='单词"{}" in clipboard'.format(query),
                                              on_enter=CopyToClipboardAction(item['translatedText'])))
 
         items.append(ExtensionResultItem(icon='images/icon.png',
@@ -58,6 +62,8 @@ class TranslatorExtension(Extension):
 
 def is_chinese(word):
     """判断一个unicode是否是汉字"""
+    if isinstance(word, str):
+        word = word.decode('utf-8')
     for uchar in word:
         if u'\u4e00' <= uchar <= u'\u9fa5':
             return True
@@ -76,6 +82,8 @@ def search_word(translator, word):
     if translator is None:
         return []
     target_lang, source_lang = detect_language(word)
+    if isinstance(word, unicode):
+        word = word.encode('utf8')
     res = translator.translate(word,
                                target_language=target_lang,
                                source_language=source_lang,
@@ -94,17 +102,20 @@ def get_URL(word):
     target_lang, source_lang = detect_language(word)
     base_url = 'https://translate.google.cn'
     return '{}/#{}/{}/{}'.format(base_url, lang_dict.get(source_lang, source_lang),
-                                 lang_dict.get(target_lang, target_lang), word)
+                                 lang_dict.get(target_lang, target_lang),
+                                 urllib.quote(word))
 
 
 class KeywordQueryEventListener(EventListener):
 
     def on_event(self, event, extension):
         query = event.get_argument()
+        if isinstance(query, unicode):
+            query = query.encode('utf-8')
 
         if query is None:
             return extension.show_menu()
-        logging.debug(u"单词为" + query)
+        logging.debug("单词为{}".format(query))
         items = []
         for item in search_word(extension.client, query):
             logging.debug(item)
