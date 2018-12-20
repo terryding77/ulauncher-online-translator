@@ -59,7 +59,7 @@ class TranslatorExtension(Extension):
 
             translator_url = translator.get_url(word)
             items.append(ExtensionResultItem(icon='images/icon.png',
-                                             name='打开浏览器使用{}搜索'.format(trans_types),
+                                             name='在浏览器中使用{}翻译'.format(trans_type),
                                              description='from {} translate'.format(trans_type),
                                              on_enter=OpenUrlAction(translator_url)))
         return items
