@@ -6,7 +6,7 @@
   "developer_name": "Terry Ding",
   "icon": "images/icon.png",
   "options": {
-    "query_debounce": 1
+    "query_debounce": 0.2
   },
   "preferences": [
     {
@@ -15,6 +15,13 @@
       "name": "translator",
       "description": " extension",
       "default_value": "tran"
+    },
+    {
+      "id": "translators",
+      "type": "input",
+      "name": "choose translators you want to use",
+      "description": "you can choose from ['google', 'baidu'], use ';' to split like google;baidu; ",
+      "default_value": "google;baidu;"
     },
     {
       "id": "google_credentials",
@@ -28,6 +35,20 @@
       "type": "input",
       "name": "a https proxy url like: socks5://127.0.0.1:1080",
       "description": "a https proxy url like: socks5://127.0.0.1:1080",
+      "default_value": ""
+    },
+    {
+      "id": "baidu_appid",
+      "type": "input",
+      "name": "baidu_appid",
+      "description": "baidu_appid from http://api.fanyi.baidu.com/api/trans/product/desktop?req=developer",
+      "default_value": ""
+    },
+    {
+      "id": "baidu_secret_key",
+      "type": "input",
+      "name": "baidu_secret_key",
+      "description": "baidu_secret_key from http://api.fanyi.baidu.com/api/trans/product/desktop?req=developer",
       "default_value": ""
     }
   ]
