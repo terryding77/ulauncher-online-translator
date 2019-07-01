@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import logging
 import os
-import urllib
+import urllib.request
 from pprint import pformat
 
 from .translator import Translator, Item
@@ -45,8 +45,7 @@ class GoogleTranslator(Translator):
         if self.client is None:
             return []
         target_lang, source_lang = self.detect_language(word)
-        if isinstance(word, unicode):
-            word = word.encode('utf8')
+        word = self.encode(word)
         try:
             res = self.client.translate(word,
                                         target_language=target_lang,
@@ -57,7 +56,8 @@ class GoogleTranslator(Translator):
             res = []
         logging.debug(res)
         if isinstance(res, dict):
-            res = [Item(source_lang, target_lang, word, res.get('translatedText', ''))]
+            res = [Item(source_lang, target_lang, word,
+                        res.get('translatedText', ''))]
         return res
 
     def get_url(self, word):
@@ -69,4 +69,4 @@ class GoogleTranslator(Translator):
         base_url = 'https://translate.google.cn'
         return '{}/#{}/{}/{}'.format(base_url, lang_dict.get(source_lang, source_lang),
                                      lang_dict.get(target_lang, target_lang),
-                                     urllib.quote(word))
+                                     urllib.request.quote(word))

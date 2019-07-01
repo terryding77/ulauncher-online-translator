@@ -3,9 +3,7 @@
 import logging
 import os
 from collections import defaultdict
-
-from translators import Translator
-from translators import translators as trans_types
+from typing import List
 
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
@@ -15,6 +13,9 @@ from ulauncher.api.shared.action.RenderResultListAction import RenderResultListA
 from ulauncher.api.shared.event import KeywordQueryEvent, PreferencesEvent, PreferencesUpdateEvent
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
+from translators import Translator
+from translators import translators as trans_types
+
 
 class TranslatorExtension(Extension):
 
@@ -23,7 +24,8 @@ class TranslatorExtension(Extension):
         self.preferences = dict()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
         self.subscribe(PreferencesEvent, PreferencesEventListener())
-        self.subscribe(PreferencesUpdateEvent, PreferencesUpdateEventListener())
+        self.subscribe(PreferencesUpdateEvent,
+                       PreferencesUpdateEventListener())
 
         self.keyword = None
 
@@ -34,15 +36,13 @@ class TranslatorExtension(Extension):
 
     def show_menu(self):
         query = os.popen('xclip -out -selection clipboard').read()
-        if isinstance(query, unicode):
-            query = query.encode('utf-8')
 
         logging.info('剪切板中内容为 {}'.format(query))
         items = self.get_search_result(query)
 
         return RenderResultListAction(items)
 
-    def get_search_result(self, word):
+    def get_search_result(self, word: str) -> List[ExtensionResultItem]:
         items = []
         for trans_type, translator in self.translators.items():
             for item in translator.search_word(word):
@@ -59,13 +59,16 @@ class TranslatorExtension(Extension):
 
             translator_url = translator.get_url(word)
             items.append(ExtensionResultItem(icon='images/icon.png',
-                                             name='在浏览器中使用{}翻译'.format(trans_type),
-                                             description='from {} translate'.format(trans_type),
+                                             name='在浏览器中使用{}翻译'.format(
+                                                 trans_type),
+                                             description='from {} translate'.format(
+                                                 trans_type),
                                              on_enter=OpenUrlAction(translator_url)))
         return items
 
     def update_translators(self):
-        trans_names = self.preferences.get('translators', '').lower().split(';')
+        trans_names = self.preferences.get(
+            'translators', '').lower().split(';')
         for name in trans_names:
             if name in trans_types:
                 logging.debug("尝试初始化{}翻译器".format(name))
@@ -80,8 +83,6 @@ class KeywordQueryEventListener(EventListener):
 
     def on_event(self, event, extension):
         query = event.get_argument()
-        if isinstance(query, unicode):
-            query = query.encode('utf-8')
 
         if query is None:
             return extension.show_menu()

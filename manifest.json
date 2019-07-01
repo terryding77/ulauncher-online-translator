@@ -1,6 +1,5 @@
 {
-  "manifest_version": "2",
-  "api_version": "1",
+  "required_api_version": "^2.0.0",
   "name": "online translator",
   "description": "online translator default for Chinese and English",
   "developer_name": "Terry Ding",
